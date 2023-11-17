@@ -3,7 +3,7 @@ from ipc_tools import QueueLike
 
 # TODO make a dag widget that shows buffer size and FPS in real time ?
 
-class DAG():
+class ProcessingDAG():
 
     def __init__(self):
         self.nodes = []
