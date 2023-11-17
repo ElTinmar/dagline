@@ -63,7 +63,7 @@ class DAGWidget(QWidget):
             row.addWidget(self.queue_name[i])
             row.addWidget(self.sender_name[i])
             row.addWidget(self.fps_in_label[i])
-            row.addWidget(self.self.progress_bars[i])
+            row.addWidget(self.progress_bars[i])
             row.addWidget(self.fps_out_label[i])
             row.addWidget(self.receiver_name[i])
             
