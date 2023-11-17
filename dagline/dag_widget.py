@@ -1,12 +1,13 @@
 from PyQt5.QtCore import QTimer, Qt
-from PyQt5.QtWidgets import QProgressBar, QHBoxLayout, QVBoxLayout, QWidget
-from .dag import Proc
+from PyQt5.QtWidgets import QProgressBar, QHBoxLayout, QVBoxLayout, QWidget, QPushButton
+from .dag import ProcessingDAG
 
 class DAGWidget(QWidget):
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, dag: ProcessingDAG, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.dag = dag
         self.declare_components()
         self.layout_components()
 
