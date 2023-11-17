@@ -20,6 +20,7 @@ class DAGWidget(QWidget):
         self.timer.start()
 
     def declare_components(self):
+
         self.start_button = QPushButton('start', self)
         self.start_button.clicked.connect(self.dag.start)
 
@@ -73,9 +74,10 @@ class DAGWidget(QWidget):
             mainlayout.addLayout(row)
 
     def main(self):
+
         for i in range(len(self.dag.edges)):
             sender, receiver, queue, name = self.dag.edges[i]
-            fps_in, fps_out = queue.get_freqs()
+            fps_in, fps_out = queue.get_freqs() 
             self.progress_bars[i].setValue(queue.qsize())
             self.fps_in_label[i].setText(str(fps_in))
             self.fps_out_label[i].setText(str(fps_out))
