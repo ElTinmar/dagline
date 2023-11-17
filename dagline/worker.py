@@ -205,11 +205,3 @@ class WorkerNode(ABC):
         '''stop the loop and join process'''
         self.stop_event.set()
         self.process.terminate()
-
-# TODO have connect be a method of class DAG, that would also start and stop the whole chain
-# from root to leaves
-# IDEA have DAG show topology using a graph library
-# IDEA maybe have DAG monitor the queues 
-def connect(sender: WorkerNode, receiver: WorkerNode, queue: QueueLike, name: str):
-    sender.register_send_queue(queue, name)
-    receiver.register_receive_queue(queue, name)
