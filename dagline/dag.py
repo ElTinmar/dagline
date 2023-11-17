@@ -1,7 +1,7 @@
 from .worker import WorkerNode
 from ipc_tools import QueueLike
 
-class DAG():
+class ProcessingDAG():
 
     def __init__(self):
         self.nodes = []
