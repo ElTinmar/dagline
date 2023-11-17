@@ -2,6 +2,9 @@ from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtWidgets import QProgressBar, QHBoxLayout, QVBoxLayout, QWidget, QPushButton, QLabel
 from .dag import ProcessingDAG
 
+# TODO get max size of the queue, maybe force the implementation of _maxsize property in ABC
+# NOTE that some queuelike may not have one, maybe can be tested with none ?
+
 class DAGWidget(QWidget):
 
     def __init__(self, dag: ProcessingDAG, *args, **kwargs):
