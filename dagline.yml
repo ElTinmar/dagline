@@ -1,0 +1,9 @@
+name: dagline
+channels:
+- conda-forge
+dependencies:
+- python == 3.8.16
+- pip
+- pip:
+  - git+https://github.com/ElTinmar/multiprocessing_logger.git@main
+  - git+https://github.com/ElTinmar/ipc_tools.git@main
