@@ -9,6 +9,8 @@ setup(
     description='DAG multiprocessing pipeline',
     long_description=open('README.md').read(),
     install_requires=[
+        "pandas",
+        "seaborn",
         "multiprocessing_logger @ git+https://github.com/ElTinmar/multiprocessing_logger.git@main",
         "ipc_tools @ git+https://github.com/ElTinmar/ipc_tools.git@main"
     ]
