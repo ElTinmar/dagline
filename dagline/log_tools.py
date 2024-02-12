@@ -5,18 +5,7 @@ from typing import List
 
 def parse_logs(filename: str) -> List:
     # TODO write the proper regex
-    log_entry = re.compile('''
-        (?P<date>\d+-\d+-\d+).*
-        (?P<time>\d+:\d+:\d+,\d+).* 
-        (?P<process_id>Process-\d+).* 
-        (?P<process_name>\w+).*
-        (?P<loglevel>\w+).* 
-        (?P<num>#\d+,).*
-        (?P<receive_time>receive_time: \d+\.\d+,).* 
-        (?P<process_time>process_time: \d+\.\d+,).* 
-        (?P<send_time>send_time: \d+\.\d+,).* 
-        (?P<total_time>total_time: \d+\.\d+,)
-    ''', re.DOTALL)
+    log_entry = re.compile(r"(?P<date>\d+-\d+-\d+)\s+(?P<time>\d+:\d+:\d+,\d+)\s+(?P<process_id>Process-\d+)\s+(?P<process_name>\w+)\s+(?P<loglevel>\w+)\s+(?P<num>#\d+\s,)\s+(?P<receive_time>receive_time: \d+\.\d+,)\s+(?P<process_time>process_time: \d+\.\d+,)\s+(?P<send_time>send_time: \d+\.\d+,)\s+(?P<total_time>total_time: \d+\.\d+)")
     with open(filename, 'r') as f:
         content = f.read()
         entries = re.findall(log_entry, content)
