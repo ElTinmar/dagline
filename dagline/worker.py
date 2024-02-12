@@ -95,7 +95,7 @@ class WorkerNode(ABC):
         send_time_ms = (t3_ns - t2_ns) * 1e-6
         total_time_ms = (t3_ns - t0_ns) * 1e-6
 
-        self.local_logger.debug(f'''
+        self.local_logger.info(f'''
             #{iteration} ,
             receive_time: {receive_time_ms}, 
             process_time: {process_time_ms}, 
