@@ -46,8 +46,8 @@ def plot_logs(filename: str) -> None:
 
     # boxplot by process
     fig, axes = plt.subplots(1, 4, figsize=(8,2))
-    sns.boxplot(ax=axes[0], data=data,x='process_name', y='receive_time')
-    sns.boxplot(ax=axes[1], data=data,x='process_name', y='process_time')
-    sns.boxplot(ax=axes[2], data=data,x='process_name', y='send_time')
-    sns.boxplot(ax=axes[3], data=data,x='process_name', y='total_time')
+    sns.boxplot(ax=axes[0], data=data, x='process_name', y='receive_time')
+    sns.boxplot(ax=axes[1], data=data, x='process_name', y='process_time')
+    sns.boxplot(ax=axes[2], data=data, x='process_name', y='send_time')
+    sns.boxplot(ax=axes[3], data=data, x='process_name', y='total_time')
     plt.show()
