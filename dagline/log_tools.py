@@ -1,14 +1,24 @@
 import pandas as pd
 import seaborn as sns
 import re
-from typing import List
+from typing import List, Dict
 
-def parse_logs(filename: str) -> List:
-    # TODO write the proper regex
-    log_entry = re.compile(r"(?P<date>\d+-\d+-\d+)\s+(?P<time>\d+:\d+:\d+,\d+)\s+(?P<process_id>Process-\d+)\s+(?P<process_name>\w+)\s+(?P<loglevel>\w+)\s+(?P<num>#\d+\s,)\s+(?P<receive_time>receive_time: \d+\.\d+,)\s+(?P<process_time>process_time: \d+\.\d+,)\s+(?P<send_time>send_time: \d+\.\d+,)\s+(?P<total_time>total_time: \d+\.\d+)")
+def parse_logs(filename: str) -> List[Dict]:
+    log_entry = re.compile(r"""
+        (?P<date>\d+-\d+-\d+) \s+
+        (?P<time>\d+:\d+:\d+,\d+) \s+
+        (?P<process_id>Process-\d+) \s+
+        (?P<process_name>\w+) \s+
+        (?P<loglevel>\w+) \s+
+        [#](?P<num>\d+) \s,\s+
+        receive_time:\s (?P<receive_time>\d+\.\d+) ,\s+
+        process_time:\s (?P<process_time>\d+\.\d+) ,\s+
+        send_time:\s (?P<send_time>\d+\.\d+) ,\s+
+        total_time:\s (?P<total_time>\d+\.\d+)
+        """, re.VERBOSE)
     with open(filename, 'r') as f:
         content = f.read()
-        entries = re.findall(log_entry, content)
+        entries = [e.groupdict() for e in log_entry.finditer(content)]
     return entries
 
 def plot_logs(filename: str) -> None:
