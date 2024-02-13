@@ -120,6 +120,7 @@ class WorkerNode(ABC):
         if self.profile:
             self.profiler.disable()
             ps = pstats.Stats(self.profiler)
+            ps.print_stats(50)
             ps.dump_stats(self.name + '.prof')
 
     def receive(self) -> Optional[Any]:
