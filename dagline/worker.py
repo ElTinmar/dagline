@@ -5,6 +5,8 @@ import time
 from itertools import cycle
 from queue import Empty, Full
 from enum import Enum
+import cProfile
+import pstats
 
 from multiprocessing_logger import Logger
 from ipc_tools import QueueLike
@@ -39,7 +41,8 @@ class WorkerNode(ABC):
             send_strategy: send_strategy = send_strategy.DISPATCH, 
             receive_block: bool = True,
             receive_timeout: Optional[float] = 10.0,
-            receive_strategy: receive_strategy = receive_strategy.POLL
+            receive_strategy: receive_strategy = receive_strategy.POLL,
+            profile: bool = False
         ) -> None:
         
         super().__init__()
@@ -60,6 +63,8 @@ class WorkerNode(ABC):
         self.receive_timeout = receive_timeout
         self.receive_queues_iterator = None
         self.receive_strategy = receive_strategy
+        self.profile = profile
+        self.profiler = cProfile.Profile()
 
     def register_receive_queue(self, queue: QueueLike, name: str):
         self.receive_queues.append(queue)
@@ -107,9 +112,15 @@ class WorkerNode(ABC):
         '''initialize resources at the beginning of the loop in a new process'''
         self.logger.configure_emitter()
         self.local_logger = self.logger.get_logger(self.name)
+        if self.profile:
+            self.profiler.enable()
 
     def cleanup(self) -> None:
         '''cleans resources at the end'''
+        if self.profile:
+            self.profiler.disable()
+            ps = pstats.Stats(self.profiler)
+            ps.dump_stats(self.name + '.prof')
 
     def receive(self) -> Optional[Any]:
         '''receive data'''
