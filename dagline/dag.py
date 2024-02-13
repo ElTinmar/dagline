@@ -29,4 +29,4 @@ class ProcessingDAG():
     def stop(self):
         # TODO stop from root to leaves
         for node in self.nodes:
-            node.kill()
+            node.stop()
