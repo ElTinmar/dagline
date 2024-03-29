@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import re
 from typing import List, Dict, Optional
 
-#TODO 45 degrees rotation on x labels, remove ylabel and use title instead
+#TODO remove ylabel and use title instead
 
 def parse_logs(filename: str) -> List[Dict]:
 
@@ -51,8 +51,10 @@ def plot_logs(filename: str, outlier_thresh: Optional[float] = None) -> None:
 
     # boxplot by process
     fig, axes = plt.subplots(1, 4, figsize=(8,2))
-    sns.boxplot(ax=axes[0], data=data, x='process_name', y='receive_time')
-    sns.boxplot(ax=axes[1], data=data, x='process_name', y='process_time')
-    sns.boxplot(ax=axes[2], data=data, x='process_name', y='send_time')
-    sns.boxplot(ax=axes[3], data=data, x='process_name', y='total_time')
+    sns.boxplot(ax=axes[0], data=data, x='process_name', y='receive_time').set_title('receive_time').set(ylabel=None)
+    sns.boxplot(ax=axes[1], data=data, x='process_name', y='process_time').set_title('process_time').set(ylabel=None)
+    sns.boxplot(ax=axes[2], data=data, x='process_name', y='send_time').set_title('send_time').set(ylabel=None)
+    sns.boxplot(ax=axes[3], data=data, x='process_name', y='total_time').set_title('total_time').set(ylabel=None)
+    for ax in axes:
+        ax.tick_params(axis='x', rotation=45)
     plt.show()
