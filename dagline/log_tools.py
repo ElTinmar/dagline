@@ -2,7 +2,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt  
 import re
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 #TODO 45 degrees rotation on x labels, remove ylabel and use title instead
 
@@ -27,7 +27,7 @@ def parse_logs(filename: str) -> List[Dict]:
     return entries
 
 
-def plot_logs(filename: str) -> None:
+def plot_logs(filename: str, outlier_thresh: Optional[float] = None) -> None:
     
     # get entries using regexp
     entries = parse_logs(filename)
@@ -45,6 +45,9 @@ def plot_logs(filename: str) -> None:
         'send_time': 'float32',
         'total_time': 'float32',
     })
+
+    if outlier_thresh:
+        data = data[data['receive_time']<outlier_thresh] 
 
     # boxplot by process
     fig, axes = plt.subplots(1, 4, figsize=(8,2))
