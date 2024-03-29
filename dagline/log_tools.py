@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import re
 from typing import List, Dict
 
+#TODO 45 degrees rotation on x labels, remove ylabel and use title instead
+
 def parse_logs(filename: str) -> List[Dict]:
 
     log_entry = re.compile(r"""
