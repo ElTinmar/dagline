@@ -2,8 +2,8 @@ from .worker import WorkerNode
 from ipc_tools import QueueLike
 
 # TODO make a dag widget that shows buffer size and FPS in real time ?
-class QueueLikeMonitorWidget(QWidget):
-    pass 
+#class QueueLikeMonitorWidget(QWidget):
+#    pass 
 
 class ProcessingDAG():
 
