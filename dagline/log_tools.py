@@ -17,7 +17,7 @@ def parse_logs(filename: str) -> List[Dict]:
         receive_time:\s (?P<receive_time>\d+\.\d+) ,\s+
         process_time:\s (?P<process_time>\d+\.\d+) ,\s+
         send_time:\s (?P<send_time>\d+\.\d+) ,\s+
-        total_time:\s (?P<total_time>\d+\.\d+)
+        total_time:\s (?P<total_time>\d+\.\d+) ,\s+
         timestamp:\s (?P<total_time>\d+\.\d+)
         """, re.VERBOSE)
     
