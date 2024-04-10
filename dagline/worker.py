@@ -162,10 +162,11 @@ class WorkerNode(ABC):
     def send(self, data: Optional[Any]) -> None:
         '''sends data'''
 
-        if self.send_strategy == send_strategy.BROADCAST:
-            self.broadcast(data)
-        elif self.send_strategy == send_strategy.DISPATCH:
-            self.dispatch(data)
+        if data is not None:
+            if self.send_strategy == send_strategy.BROADCAST:
+                self.broadcast(data)
+            elif self.send_strategy == send_strategy.DISPATCH:
+                self.dispatch(data)
 
     def broadcast(self, data_dict: Optional[Dict]) -> None:
         '''send data to all queues with proper names'''
