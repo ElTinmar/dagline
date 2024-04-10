@@ -99,13 +99,15 @@ class WorkerNode(ABC):
         process_time_ms = (t2_ns - t1_ns) * 1e-6
         send_time_ms = (t3_ns - t2_ns) * 1e-6
         total_time_ms = (t3_ns - t0_ns) * 1e-6
+        timestamp_ms = time.perf_counter_ns() * 1e-6
 
         self.local_logger.info(f'''
             #{iteration} ,
             receive_time: {receive_time_ms}, 
             process_time: {process_time_ms}, 
             send_time: {send_time_ms},
-            total_time: {total_time_ms}
+            total_time: {total_time_ms},
+            timestamp: {timestamp_ms}
         ''')
 
     def initialize(self) -> None:

@@ -18,6 +18,7 @@ def parse_logs(filename: str) -> List[Dict]:
         process_time:\s (?P<process_time>\d+\.\d+) ,\s+
         send_time:\s (?P<send_time>\d+\.\d+) ,\s+
         total_time:\s (?P<total_time>\d+\.\d+)
+        timestamp:\s (?P<total_time>\d+\.\d+)
         """, re.VERBOSE)
     
     with open(filename, 'r') as f:
@@ -44,6 +45,7 @@ def plot_logs(filename: str, outlier_thresh: Optional[float] = None) -> None:
         'process_time': 'float32',
         'send_time': 'float32',
         'total_time': 'float32',
+        'timestamp': 'float32',
     })
 
     if outlier_thresh:
