@@ -11,7 +11,7 @@ def parse_logs(filename: str) -> List[Dict]:
     log_entry = re.compile(r"""
         (?P<datetime>\d+-\d+-\d+ \s+ \d+:\d+:\d+,\d+) \s+
         (?P<process_id>Process-\d+) \s+
-        (?P<process_name>\w+) \s+
+        (?P<process_name>(\w|.)+) \s+
         (?P<loglevel>\w+) \s+
         [#](?P<num>\d+) \s,\s+
         receive_time:\s (?P<receive_time>\d+\.\d+) ,\s+
