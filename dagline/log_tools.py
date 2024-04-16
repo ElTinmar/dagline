@@ -14,11 +14,12 @@ def parse_logs(filename: str) -> List[Dict]:
         (?P<process_name>(\w|\.)+) \s+
         (?P<loglevel>\w+) \s+
         [#](?P<num>\d+) \s,\s+
+        t_start:\s (?P<t_start>\d+\.\d+) ,\s+
         receive_time:\s (?P<receive_time>\d+\.\d+) ,\s+
         process_time:\s (?P<process_time>\d+\.\d+) ,\s+
         send_time:\s (?P<send_time>\d+\.\d+) ,\s+
         total_time:\s (?P<total_time>\d+\.\d+) ,\s+
-        timestamp:\s (?P<timestamp>\d+\.\d+)
+        t_stop:\s (?P<t_stop>\d+\.\d+)
         """, re.VERBOSE)
     
     with open(filename, 'r') as f:
@@ -41,11 +42,12 @@ def plot_logs(filename: str, outlier_thresh: Optional[float] = None) -> None:
         'process_name': 'str',
         'loglevel': 'str',
         'num': 'int64',
+        't_start': 'float64',
         'receive_time': 'float64',
         'process_time': 'float64',
         'send_time': 'float64',
         'total_time': 'float64',
-        'timestamp': 'float64'
+        't_stop': 'float64'
     })
 
     if outlier_thresh:

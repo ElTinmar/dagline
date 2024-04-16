@@ -81,6 +81,7 @@ class WorkerNode(ABC):
         self.initialize()
 
         while not self.stop_event.is_set():
+            t_start = time.perf_counter_ns()
             t0_ns = time.monotonic_ns()
             data = self.receive()
             t1_ns = time.monotonic_ns() 
@@ -89,25 +90,28 @@ class WorkerNode(ABC):
             self.send(results)
             t3_ns = time.monotonic_ns()
             self.iteration += 1
-            self.log_timings(self.iteration, t0_ns,t1_ns,t2_ns,t3_ns)
+            t_stop = time.perf_counter_ns()
+            self.log_timings(self.iteration,t_start,t0_ns,t1_ns,t2_ns,t3_ns,t_stop)
             
         self.cleanup()
 
-    def log_timings(self, iteration: int, t0_ns: int, t1_ns: int, t2_ns: int, t3_ns: int):
+    def log_timings(self, iteration: int, t_start: int, t0_ns: int, t1_ns: int, t2_ns: int, t3_ns: int, t_stop: int):
         
+        t_start_ms = t_start * 1e-6
         receive_time_ms = (t1_ns - t0_ns) * 1e-6
         process_time_ms = (t2_ns - t1_ns) * 1e-6
         send_time_ms = (t3_ns - t2_ns) * 1e-6
         total_time_ms = (t3_ns - t0_ns) * 1e-6
-        timestamp_ms = time.perf_counter_ns() * 1e-6
+        t_stop_ms = t_stop * 1e-6
 
         self.local_logger.info(f'''
             #{iteration} ,
+            t_start: {t_start_ms},
             receive_time: {receive_time_ms}, 
             process_time: {process_time_ms}, 
             send_time: {send_time_ms},
             total_time: {total_time_ms},
-            timestamp: {timestamp_ms}
+            t_stop: {t_stop_ms}
         ''')
 
     def initialize(self) -> None:
