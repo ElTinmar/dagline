@@ -41,11 +41,11 @@ def plot_logs(filename: str, outlier_thresh: Optional[float] = None) -> None:
         'process_name': 'str',
         'loglevel': 'str',
         'num': 'int64',
-        'receive_time': 'float32',
-        'process_time': 'float32',
-        'send_time': 'float32',
-        'total_time': 'float32',
-        'timestamp': 'float32'
+        'receive_time': 'float64',
+        'process_time': 'float64',
+        'send_time': 'float64',
+        'total_time': 'float64',
+        'timestamp': 'float64'
     })
 
     if outlier_thresh:
