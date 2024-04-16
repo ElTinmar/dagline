@@ -58,6 +58,6 @@ def plot_logs(filename: str, outlier_thresh: Optional[float] = None) -> None:
         g = sns.boxplot(ax=ax, data=data, x='process_name', y=y)
         g.set_title(y)
         g.set(ylabel=None)
-        ax.tick_params(axis='x', rotation=45)
+        ax.tick_params(axis='x', rotation=90)
     
     plt.show()
