@@ -36,6 +36,7 @@ class WorkerNode(ABC):
             self, 
             name: str, 
             logger: Logger,
+            logger_queues: Logger,
             send_block: bool = False,
             send_timeout: Optional[float] = None,
             send_strategy: send_strategy = send_strategy.DISPATCH, 
@@ -48,6 +49,8 @@ class WorkerNode(ABC):
         super().__init__()
         self.stop_event = Event()
         self.logger = logger
+        self.local_logger = self.logger.get_logger(self.name)
+        self.logger_queues = self.logger_queues
         self.name = name
         self.iteration = 0
         self.receive_queues = []
@@ -119,15 +122,7 @@ class WorkerNode(ABC):
 
         # initialize loggers
         self.logger.configure_emitter()
-        self.local_logger = self.logger.get_logger(self.name)
-        
-        for name,queue in zip(self.receive_queue_names, self.receive_queues):
-            print('receive',name)
-            queue.init_logger()
-        
-        for name, queue in zip(self.send_queue_names, self.send_queues):
-            print('send',name)
-            queue.init_logger()
+        self.logger_queues.configure_emitter()
 
         if self.profile:
             self.profiler.enable()
