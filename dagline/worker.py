@@ -116,8 +116,17 @@ class WorkerNode(ABC):
 
     def initialize(self) -> None:
         '''initialize resources at the beginning of the loop in a new process'''
+
+        # initialize loggers
         self.logger.configure_emitter()
         self.local_logger = self.logger.get_logger(self.name)
+        
+        for queue in self.receive_queues:
+            queue.init_logger()
+        
+        for queue in self.send_queues:
+            queue.init_logger()
+
         if self.profile:
             self.profiler.enable()
 

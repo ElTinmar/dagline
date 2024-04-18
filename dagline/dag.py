@@ -5,6 +5,8 @@ from ipc_tools import QueueLike
 #class QueueLikeMonitorWidget(QWidget):
 #    pass 
 
+# TODO have ProcessingDAG handle logging and plotting of logs ?
+
 class ProcessingDAG():
 
     def __init__(self):
