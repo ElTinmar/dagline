@@ -121,12 +121,12 @@ class WorkerNode(ABC):
         self.logger.configure_emitter()
         self.local_logger = self.logger.get_logger(self.name)
         
-        for queue in self.receive_queues:
-            print('receive',queue.name)
+        for name,queue in self.receive_queue_names, self.receive_queues:
+            print('receive',name)
             queue.init_logger()
         
-        for queue in self.send_queues:
-            print('send',queue.name)
+        for name, queue in self.send_queue_names, self.send_queues:
+            print('send',name)
             queue.init_logger()
 
         if self.profile:
