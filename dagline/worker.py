@@ -49,7 +49,7 @@ class WorkerNode(ABC):
         super().__init__()
         self.stop_event = Event()
         self.logger = logger
-        self.logger_queues = self.logger_queues
+        self.logger_queues = logger_queues
         self.name = name
         self.iteration = 0
         self.receive_queues = []
