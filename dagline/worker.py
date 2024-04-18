@@ -49,7 +49,6 @@ class WorkerNode(ABC):
         super().__init__()
         self.stop_event = Event()
         self.logger = logger
-        self.local_logger = self.logger.get_logger(self.name)
         self.logger_queues = self.logger_queues
         self.name = name
         self.iteration = 0
@@ -68,6 +67,7 @@ class WorkerNode(ABC):
         self.receive_strategy = receive_strategy
         self.profile = profile
         self.profiler = cProfile.Profile()
+        self.local_logger = self.logger.get_logger(self.name)
 
     def register_receive_queue(self, queue: QueueLike, name: str):
         self.receive_queues.append(queue)
