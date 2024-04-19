@@ -1,5 +1,6 @@
 from .worker import WorkerNode
 from ipc_tools import QueueLike
+from multiprocessing import Barrier
 
 # TODO make a dag widget that shows buffer size and FPS in real time ?
 #class QueueLikeMonitorWidget(QWidget):
@@ -12,6 +13,7 @@ class ProcessingDAG():
     def __init__(self):
         self.nodes = []
         self.edges = []
+        
 
     def connect(self, sender: WorkerNode, receiver: WorkerNode, queue: QueueLike, name: str):
         sender.register_send_queue(queue, name)
@@ -27,7 +29,10 @@ class ProcessingDAG():
 
     def start(self):
         # TODO start from leave to root
+
+        barrier = Barrier(len(self.nodes))
         for node in self.nodes:
+            node.set_barrier(barrier)
             node.start()
 
     def stop(self):

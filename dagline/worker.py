@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from multiprocessing import Event, Process
+from multiprocessing import Event, Process, Barrier
 from typing  import Any, Optional, Dict
 import time
 from itertools import cycle
@@ -50,6 +50,7 @@ class WorkerNode(ABC):
         self.stop_event = Event()
         self.logger = logger
         self.logger_queues = logger_queues
+        self.barrier = None
         self.name = name
         self.iteration = 0
         self.receive_queues = []
@@ -69,6 +70,9 @@ class WorkerNode(ABC):
         self.profiler = cProfile.Profile()
         self.local_logger = self.logger.get_logger(self.name)
 
+    def set_barrier(self, barrier: Barrier) -> None:
+        self.barrier = barrier
+
     def register_receive_queue(self, queue: QueueLike, name: str):
         if queue  not in self.receive_queues:  # should I enforce that?
             self.receive_queues.append(queue)
@@ -84,6 +88,7 @@ class WorkerNode(ABC):
     def main_loop(self):
 
         self.initialize()
+        self.synchronize_workers() 
 
         while not self.stop_event.is_set():
             t_start = time.perf_counter_ns()
@@ -128,6 +133,10 @@ class WorkerNode(ABC):
 
         if self.profile:
             self.profiler.enable()
+
+    def synchronize_workers(self) -> None:
+        if self.barrier:
+            self.barrier.wait()
 
     def cleanup(self) -> None:
         '''cleans resources at the end'''
