@@ -137,6 +137,8 @@ class WorkerNode(ABC):
     def synchronize_workers(self) -> None:
         if self.barrier:
             self.barrier.wait()
+        print(f'{self.name} initialized. starting work...')
+
 
     def cleanup(self) -> None:
         '''cleans resources at the end'''
@@ -144,6 +146,7 @@ class WorkerNode(ABC):
             self.profiler.disable()
             ps = pstats.Stats(self.profiler)
             ps.dump_stats(self.name + '.prof')
+        print(f'{self.name} closing...')
 
     def receive(self) -> Optional[Any]:
         '''receive data'''
