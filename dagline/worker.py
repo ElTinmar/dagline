@@ -70,14 +70,16 @@ class WorkerNode(ABC):
         self.local_logger = self.logger.get_logger(self.name)
 
     def register_receive_queue(self, queue: QueueLike, name: str):
-        self.receive_queues.append(queue)
-        self.receive_queue_names.append(name)
-        self.receive_queues_iterator = cycle(zip(self.receive_queue_names, self.receive_queues))
+        if queue  not in self.receive_queues:  # should I enforce that?
+            self.receive_queues.append(queue)
+            self.receive_queue_names.append(name)
+            self.receive_queues_iterator = cycle(zip(self.receive_queue_names, self.receive_queues))
 
     def register_send_queue(self, queue: QueueLike, name: str):
-        self.send_queues.append(queue)
-        self.send_queue_names.append(name)
-        self.send_queues_iterator = cycle(zip(self.send_queue_names, self.send_queues))
+        if queue  not in self.send_queues: # should I enforce that?
+            self.send_queues.append(queue)
+            self.send_queue_names.append(name)
+            self.send_queues_iterator = cycle(zip(self.send_queue_names, self.send_queues))
     
     def main_loop(self):
 
