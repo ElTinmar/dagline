@@ -29,7 +29,9 @@ class send_strategy(Enum):
 
     DISPATCH = 1
     BROADCAST = 2
-    
+
+# TODO: Have workers also create a QT window and event loop in a separate process 
+# implement an IPC system between the worker loop and GUI to communicate 
 class WorkerNode(ABC):
 
     def __init__(
