@@ -13,7 +13,6 @@ class ProcessingDAG():
     def __init__(self):
         self.nodes = []
         self.edges = []
-        
 
     def connect(self, sender: WorkerNode, receiver: WorkerNode, queue: QueueLike, name: str):
         sender.register_send_queue(queue, name)
