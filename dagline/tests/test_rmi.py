@@ -8,25 +8,29 @@ class A(Process):
         self.stop = stop
         self.queue = queue
 
-    def hello(self):
-        print('hello')
+    def hello(self, who, punctuation: str):
+        print('hello' + who + punctuation)
 
-    def handle(self,message):
+    def handle(self, message, args, kwargs):
         if message == 'hello':
-            self.hello()
+            self.hello(*args, **kwargs)
 
     def run(self):  
         while not self.stop.is_set():
             try:
-                message = self.queue.get(block=False)
-                self.handle(message)
+                message, arg, kwargs = self.queue.get(block=False)
+                self.handle(message, arg, kwargs)
             except Empty:
                 pass
             time.sleep(0.1)
         print('job finished')
 
 def rmi(queue):
-    queue.put('hello')
+    method = 'hello'
+    args = [' world']
+    kwargs = {'punctuation': '!'}
+    message = (method,args,kwargs)
+    queue.put(message)
 
 if __name__ == '__main__':
 
