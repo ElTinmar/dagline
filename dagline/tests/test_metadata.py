@@ -4,7 +4,7 @@ import numpy as np
 import cv2
 from ipc_tools import ObjectRingBuffer2, QueueMP
 from dagline import WorkerNode, ProcessingDAG
-from typing import Tuple
+from typing import Tuple, Dict
 from PyQt5.QtWidgets import QApplication, QLabel
 from multiprocessing_logger import Logger
 
@@ -22,8 +22,10 @@ class Gui(WorkerNode):
     def process_data(self, data: None) -> NDArray:
         self.app.processEvents()
 
-    def process_metadata(self, metadata: None) -> None:
-        self.label.setText(metadata['text'])
+    def process_metadata(self, metadata: Dict) -> None:
+        text = metadata['gui_queue']
+        if text:
+            self.label.setText(text)
 
 class Sender(WorkerNode):
 
@@ -39,8 +41,8 @@ class Sender(WorkerNode):
     
     def process_metadata(self, metadata: None) -> str:
         res = {}
-        res['text'] = f'frame #{self.index}'
-        return res 
+        res['gui_queue'] = f'frame #{self.index}' 
+        return res
 
 class Receiver(WorkerNode):
 
@@ -116,4 +118,4 @@ if __name__ == '__main__':
     #run DAG
     dag.start()
     time.sleep(10)
-    dag.stop()
+    dag.kill()
