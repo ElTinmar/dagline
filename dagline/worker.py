@@ -188,7 +188,7 @@ class WorkerNode(ABC):
             data = self.receive()
             timing.receive_data_relative_ns = time.monotonic_ns() 
 
-            results = self.work(data)
+            results = self.process_data(data)
             timing.process_data_relative_ns = time.monotonic_ns()
 
             self.send(results)
@@ -293,7 +293,11 @@ class WorkerNode(ABC):
 
         data = {}
         for name, queue in zip(receive_queue_names, receive_queues):
-            data[name] = queue.get(block=receive_block, timeout=receive_timeout)
+            try:
+                data[name] = queue.get(block=receive_block, timeout=receive_timeout)
+            except Empty:
+                data[name] = None
+
         return data
     
     # static method
@@ -377,7 +381,10 @@ class WorkerNode(ABC):
 
             for name, queue in zip(send_queue_names, send_queues):      
                 if name in data_dict:
-                    queue.put(data_dict[name], block=send_block, timeout=send_timeout)
+                    try:
+                        queue.put(data_dict[name], block=send_block, timeout=send_timeout)
+                    except Full:
+                        pass
 
     # static method
     def dispatch(
