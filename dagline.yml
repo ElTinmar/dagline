@@ -5,6 +5,7 @@ dependencies:
 - python == 3.8.16
 - pip
 - pyqt
+- opencv
 - ipython
 - pandas
 - seaborn
