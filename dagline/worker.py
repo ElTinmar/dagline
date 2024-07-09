@@ -8,7 +8,6 @@ from queue import Empty, Full
 from enum import Enum
 import cProfile
 import pstats
-
 from multiprocessing_logger import Logger
 from ipc_tools import QueueLike
 
