@@ -23,7 +23,7 @@ class Gui(WorkerNode):
         self.app.processEvents()
 
     def process_metadata(self, metadata: None) -> None:
-        self.label.setText(metadata)
+        self.label.setText(metadata['text'])
 
 class Sender(WorkerNode):
 
@@ -38,7 +38,9 @@ class Sender(WorkerNode):
         return (self.index, timestamp, np.random.randint(0,255,(HEIGHT,WIDTH), dtype=np.uint8))
     
     def process_metadata(self, metadata: None) -> str:
-        return f'frame #{self.index}'
+        res = {}
+        res['text'] = f'frame #{self.index}'
+        return res 
 
 class Receiver(WorkerNode):
 
@@ -51,7 +53,8 @@ class Receiver(WorkerNode):
         cv2.destroyAllWindows()
 
     def process_data(self, data: NDArray) -> None:
-        cv2.imshow('receiver', data)
+        index, timestamp, image = data
+        cv2.imshow('receiver', image)
         cv2.waitKey(1)
 
     def process_metadata(self, metadata: None) -> None:
