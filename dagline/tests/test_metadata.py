@@ -5,7 +5,7 @@ import cv2
 from ipc_tools import ObjectRingBuffer2, QueueMP
 from dagline import WorkerNode, ProcessingDAG
 from typing import Tuple, Dict
-from PyQt5.QtWidgets import QApplication, QLabel
+from PyQt5.QtWidgets import QApplication, QLabel, QWidget, QPushButton, QHBoxLayout
 from multiprocessing_logger import Logger
 
 HEIGHT = 2048
@@ -16,16 +16,37 @@ class Gui(WorkerNode):
     def initialize(self) -> None:
         super().initialize()
         self.app = QApplication([])
+        self.window = QWidget()
         self.label = QLabel()
-        self.label.show()
+        self.button = QPushButton("Black")
+        self.button.setCheckable(True)
+        self.button.toggled.connect(self.on_press)
+        self.toggled = False
+        self.layout = QHBoxLayout(self.window)
+        self.layout.addWidget(self.label)
+        self.layout.addWidget(self.button)
+        self.window.show()
+
+    def on_press(self):
+        self.toggled = True
 
     def process_data(self, data: None) -> NDArray:
         self.app.processEvents()
 
-    def process_metadata(self, metadata: Dict) -> None:
-        text = metadata['gui_queue']
+    def process_metadata(self, metadata: Dict) -> Dict:
+        # receive
+        text = metadata['gui_info']
         if text:
             self.label.setText(text)
+
+        # send only one message when button is toggled, otherwise queue gets full
+        if self.toggled:
+            res = {}
+            res['gui_command'] = self.button.isChecked()
+            self.toggled = False
+            return res       
+        else:
+            return None
 
 class Sender(WorkerNode):
 
@@ -33,15 +54,26 @@ class Sender(WorkerNode):
         super().initialize()
         self.index = 0
         self.start_time = time.perf_counter() 
+        self.state = False
 
     def process_data(self, data: None) -> NDArray:
         self.index += 1
         timestamp = time.perf_counter() - self.start_time
-        return (self.index, timestamp, np.random.randint(0,255,(HEIGHT,WIDTH), dtype=np.uint8))
+        if self.state:
+            image = np.zeros((HEIGHT,WIDTH), dtype=np.uint8)
+        else:
+            image = np.random.randint(0,255,(HEIGHT,WIDTH), dtype=np.uint8)
+        return (self.index, timestamp, image)
     
-    def process_metadata(self, metadata: None) -> str:
+    def process_metadata(self, metadata: Dict) -> Dict:
+        # receive
+        state = metadata['gui_command']
+        if state is not None: 
+            self.state = state
+
+        # send
         res = {}
-        res['gui_queue'] = f'frame #{self.index}' 
+        res['gui_info'] = f'frame #{self.index}' 
         return res
 
 class Receiver(WorkerNode):
@@ -99,6 +131,7 @@ if __name__ == '__main__':
         name = 'images'
     )
     q1 = QueueMP()
+    q2 = QueueMP()
 
     # create DAG
     dag = ProcessingDAG()
@@ -112,10 +145,20 @@ if __name__ == '__main__':
         sender=s,
         receiver=g,
         queue=q1,
-        name='gui_queue'
+        name='gui_info'
+    )
+    dag.connect_metadata(
+        sender=g,
+        receiver=s,
+        queue=q2,
+        name='gui_command'
     )
 
     #run DAG
+    #worker_logger.start()
+    #queue_logger.start()
     dag.start()
     time.sleep(10)
     dag.kill()
+    #worker_logger.stop()
+    #queue_logger.stop()
