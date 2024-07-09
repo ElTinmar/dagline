@@ -42,7 +42,7 @@ class WorkerNode(ABC):
             send_block: bool = False,
             send_timeout: Optional[float] = None,
             send_strategy: send_strategy = send_strategy.DISPATCH, 
-            receive_block: bool = True,
+            receive_block: bool = True, # TODO maybe wether to block and timeout duration should be defined on a per queue basis
             receive_timeout: Optional[float] = 10.0,
             receive_strategy: receive_strategy = receive_strategy.POLL,
             profile: bool = False
@@ -50,42 +50,45 @@ class WorkerNode(ABC):
         
         super().__init__()
         self.stop_event = Event()
-        self.logger = logger
-        self.logger_queues = logger_queues
         self.barrier = None
         self.name = name
         self.iteration = 0
-        self.receive_queues = []
-        self.receive_queue_names = []
-        self.receive_queues_iterator = None
-        self.send_queues = []
-        self.send_queue_names = []
-        self.send_queues_iterator = None
+
+        self.logger = logger
+        self.logger_queues = logger_queues
+        self.local_logger = self.logger.get_logger(self.name)
+
+        self.receive_dataqueues = []
+        self.receive_dataqueue_names = []
+        self.receive_dataqueues_iterator = None
+        self.receive_block = receive_block
+        self.receive_timeout = receive_timeout
+        self.receive_strategy = receive_strategy
+
+        self.send_dataqueues = []
+        self.send_dataqueue_names = []
+        self.send_dataqueues_iterator = None
         self.send_block = send_block
         self.send_timeout = send_timeout
         self.send_strategy = send_strategy
-        self.receive_block = receive_block
-        self.receive_timeout = receive_timeout
-        self.receive_queues_iterator = None
-        self.receive_strategy = receive_strategy
+
         self.profile = profile
         self.profiler = cProfile.Profile()
-        self.local_logger = self.logger.get_logger(self.name)
 
     def set_barrier(self, barrier: Barrier) -> None:
         self.barrier = barrier
 
-    def register_receive_queue(self, queue: QueueLike, name: str):
-        if queue  not in self.receive_queues:  # should I enforce that?
-            self.receive_queues.append(queue)
-            self.receive_queue_names.append(name)
-            self.receive_queues_iterator = cycle(zip(self.receive_queue_names, self.receive_queues))
+    def register_receive_dataqueue(self, queue: QueueLike, name: str):
+        if queue  not in self.receive_dataqueues:  # should I enforce that?
+            self.receive_dataqueues.append(queue)
+            self.receive_dataqueue_names.append(name)
+            self.receive_dataqueues_iterator = cycle(zip(self.receive_dataqueue_names, self.receive_dataqueues))
 
-    def register_send_queue(self, queue: QueueLike, name: str):
-        if queue  not in self.send_queues: # should I enforce that?
-            self.send_queues.append(queue)
-            self.send_queue_names.append(name)
-            self.send_queues_iterator = cycle(zip(self.send_queue_names, self.send_queues))
+    def register_send_dataqueue(self, queue: QueueLike, name: str):
+        if queue  not in self.send_dataqueues: # should I enforce that?
+            self.send_dataqueues.append(queue)
+            self.send_dataqueue_names.append(name)
+            self.send_dataqueues_iterator = cycle(zip(self.send_dataqueue_names, self.send_dataqueues))
     
     def main_loop(self):
 
@@ -161,21 +164,21 @@ class WorkerNode(ABC):
         '''Each receive queue must receive data'''
 
         data = {}
-        for name, queue in zip(self.receive_queue_names, self.receive_queues):
+        for name, queue in zip(self.receive_dataqueue_names, self.receive_dataqueues):
             data[name] = queue.get(block=self.receive_block, timeout=self.receive_timeout)
         return data
     
     def poll(self) -> Optional[Any]:
         '''Use if all queues are equivalent. Return data from the first queue that is ready'''
 
-        if self.receive_queues_iterator is not None:
+        if self.receive_dataqueues_iterator is not None:
 
             if self.receive_timeout is None:
                 deadline = float('inf')
             else:
                 deadline = time.monotonic() + self.receive_timeout
 
-            for name, queue in self.receive_queues_iterator:
+            for name, queue in self.receive_dataqueues_iterator:
                 
                 if time.monotonic() > deadline:
                     return None
@@ -201,21 +204,21 @@ class WorkerNode(ABC):
 
         if data_dict is not None:
 
-            for name, queue in zip(self.send_queue_names, self.send_queues):      
+            for name, queue in zip(self.send_dataqueue_names, self.send_dataqueues):      
                 if name in data_dict:
                     queue.put(data_dict[name], block=self.send_block, timeout=self.send_timeout)
 
     def dispatch(self, data: Any) -> None:
         '''Use if all queues are equivalent. Send data alternatively to each queue'''
 
-        if self.send_queues_iterator is not None:
+        if self.send_dataqueues_iterator is not None:
 
             if self.send_timeout is None:
                 deadline = float('inf')
             else:
                 deadline = time.monotonic() + self.send_timeout
 
-            for name, queue in self.send_queues_iterator:
+            for name, queue in self.send_dataqueues_iterator:
                 
                 if time.monotonic() > deadline:
                     return None
