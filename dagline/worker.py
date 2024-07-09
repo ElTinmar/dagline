@@ -408,7 +408,7 @@ class WorkerNode(ABC):
                 # sleep a bit ?
 
     @abstractmethod
-    def work(self, data: Any) -> Any:
+    def process_data(self, data: Any) -> Any:
         '''does the actual processing'''
 
     @abstractmethod
