@@ -79,7 +79,8 @@ class send_strategy(Enum):
     DISPATCH = 1
     BROADCAST = 2 # TODO this is maybe a bad name, think of something else
 
-
+#TODO: data and metadata methods share a lot of duplicated code. Can I do better without 
+# sacrificing readability ? 
 class WorkerNode(ABC):
 
     def __init__(
