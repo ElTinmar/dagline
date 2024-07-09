@@ -4,6 +4,7 @@ channels:
 dependencies:
 - python == 3.8.16
 - pip
+- pyqt
 - ipython
 - pandas
 - seaborn

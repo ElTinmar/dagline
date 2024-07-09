@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from multiprocessing import Event, Process, Barrier
-from typing  import Any, Optional, Dict
+from typing  import Any, Optional, Dict, Iterator
 import time
 from itertools import cycle
 from queue import Empty, Full
@@ -299,7 +299,7 @@ class WorkerNode(ABC):
     # static method
     def poll(
             self,
-            receive_queues_iterator: cycle[tuple] | None,
+            receive_queues_iterator: Optional[Iterator],
             receive_timeout: Optional[float],
 
         ) -> Optional[Any]:
@@ -383,7 +383,7 @@ class WorkerNode(ABC):
     def dispatch(
             self, 
             data: Any,
-            send_queues_iterator: cycle[tuple],
+            send_queues_iterator: Optional[Iterator],
             send_timeout: Optional[bool]
         ) -> None:
         '''Use if all queues are equivalent. Send data alternatively to each queue'''
