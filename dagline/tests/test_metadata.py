@@ -4,7 +4,7 @@ import numpy as np
 import cv2
 from ipc_tools import ObjectRingBuffer2, QueueMP
 from dagline import WorkerNode, ProcessingDAG
-from typing import Tuple, Dict
+from typing import Tuple, Dict, Optional
 from PyQt5.QtWidgets import QApplication, QLabel, QWidget, QPushButton, QHBoxLayout
 from multiprocessing_logger import Logger
 
@@ -33,7 +33,7 @@ class Gui(WorkerNode):
     def process_data(self, data: None) -> NDArray:
         self.app.processEvents()
 
-    def process_metadata(self, metadata: Dict) -> Dict:
+    def process_metadata(self, metadata: Dict) -> Optional[Dict]:
         # receive
         text = metadata['gui_info']
         if text:
@@ -50,19 +50,28 @@ class Gui(WorkerNode):
 
 class Sender(WorkerNode):
 
+    def __init__(self, fps:int=30, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.index = 0
+        self.state = False
+        self.prev_time = 0
+        self.fps = fps
+
     def initialize(self) -> None:
         super().initialize()
-        self.index = 0
         self.start_time = time.perf_counter() 
-        self.state = False
 
     def process_data(self, data: None) -> NDArray:
         self.index += 1
-        timestamp = time.perf_counter() - self.start_time
         if self.state:
             image = np.zeros((HEIGHT,WIDTH), dtype=np.uint8)
         else:
             image = np.random.randint(0,255,(HEIGHT,WIDTH), dtype=np.uint8)
+        timestamp = time.perf_counter() - self.start_time
+        while timestamp-self.prev_time < 1/self.fps:
+            timestamp = time.perf_counter() - self.start_time
+            time.sleep(0.01)
+        self.prev_time = timestamp
         return (self.index, timestamp, image)
     
     def process_metadata(self, metadata: Dict) -> Dict:
@@ -119,7 +128,7 @@ if __name__ == '__main__':
 
     # create workers
     g = Gui(name='gui', logger=worker_logger, logger_queues=queue_logger)
-    s = Sender(name='sender', logger=worker_logger, logger_queues=queue_logger)
+    s = Sender(fps=60, name='sender', logger=worker_logger, logger_queues=queue_logger)
     r = Receiver(name='receiver', logger=worker_logger, logger_queues=queue_logger)
 
     # create IPC
@@ -158,7 +167,7 @@ if __name__ == '__main__':
     #worker_logger.start()
     #queue_logger.start()
     dag.start()
-    time.sleep(10)
+    time.sleep(20)
     dag.kill()
     #worker_logger.stop()
     #queue_logger.stop()
