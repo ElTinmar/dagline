@@ -15,9 +15,12 @@ def parse_logs(filename: str) -> List[Dict]:
         (?P<loglevel>\w+) \s+
         [#](?P<num>\d+) \s,\s+
         t_start:\s (?P<t_start>\d+\.\d+) ,\s+
-        receive_time:\s (?P<receive_time>\d+\.\d+) ,\s+
-        process_time:\s (?P<process_time>\d+\.\d+) ,\s+
-        send_time:\s (?P<send_time>\d+\.\d+) ,\s+
+        receive_data_time:\s (?P<receive_data_time>\d+\.\d+) ,\s+
+        process_data_time:\s (?P<process_data_time>\d+\.\d+) ,\s+
+        send_data_time:\s (?P<send_data_time>\d+\.\d+) ,\s+
+        receive_metadata_time:\s (?P<receive_metadata_time>\d+\.\d+) ,\s+
+        process_metadata_time:\s (?P<process_metadata_time>\d+\.\d+) ,\s+
+        send_metadata_time:\s (?P<send_metadata_time>\d+\.\d+) ,\s+
         total_time:\s (?P<total_time>\d+\.\d+) ,\s+
         t_stop:\s (?P<t_stop>\d+\.\d+)
         """, re.VERBOSE)
@@ -43,19 +46,22 @@ def plot_logs(filename: str, outlier_thresh: Optional[float] = None) -> None:
         'loglevel': 'str',
         'num': 'int64',
         't_start': 'float64',
-        'receive_time': 'float64',
-        'process_time': 'float64',
-        'send_time': 'float64',
+        'receive_data_time': 'float64',
+        'process_data_time': 'float64',
+        'send_data_time': 'float64',
+        'receive_metadata_time': 'float64',
+        'process_metadata_time': 'float64',
+        'send_metadata_time': 'float64',
         'total_time': 'float64',
         't_stop': 'float64'
     })
 
     if outlier_thresh:
-        data = data[data['receive_time']<outlier_thresh] 
+        data = data[data['receive_data_time']<outlier_thresh] 
 
     # boxplot by process
     fig, axes = plt.subplots(1, 4, figsize=(8,2))
-    for id, y in enumerate(['receive_time', 'process_time', 'send_time', 'total_time']):
+    for id, y in enumerate(['receive_data_time', 'process_data_time', 'send_datatime', 'total_time']):
         ax = axes[id]
         g = sns.boxplot(ax=ax, data=data, x='process_name', y=y)
         g.set_title(y)

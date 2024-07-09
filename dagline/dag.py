@@ -2,21 +2,16 @@ from .worker import WorkerNode
 from ipc_tools import QueueLike
 from multiprocessing import Barrier
 
-# TODO make a dag widget that shows buffer size and FPS in real time ?
-#class QueueLikeMonitorWidget(QWidget):
-#    pass 
-
-# TODO have ProcessingDAG handle logging and plotting of logs ?
-
 class ProcessingDAG():
 
     def __init__(self):
         self.nodes = []
-        self.edges = []
+        self.data_edges = []
+        self.metadata_edges = []
 
-    def connect(self, sender: WorkerNode, receiver: WorkerNode, queue: QueueLike, name: str):
-        sender.register_send_queue(queue, name)
-        receiver.register_receive_queue(queue, name)
+    def connect_data(self, sender: WorkerNode, receiver: WorkerNode, queue: QueueLike, name: str):
+        sender.register_send_data_queue(queue, name)
+        receiver.register_receive_data_queue(queue, name)
 
         if sender not in self.nodes:
             self.nodes.append(sender)
@@ -24,7 +19,19 @@ class ProcessingDAG():
         if receiver not in self.nodes:
             self.nodes.append(receiver)
 
-        self.edges.append((sender, receiver, queue, name))
+        self.data_edges.append((sender, receiver, queue, name))
+
+    def connect_metadata(self, sender: WorkerNode, receiver: WorkerNode, queue: QueueLike, name: str):
+        sender.register_send_metadata_queue(queue, name)
+        receiver.register_receive_metadata_queue(queue, name)
+
+        if sender not in self.nodes:
+            self.nodes.append(sender)
+
+        if receiver not in self.nodes:
+            self.nodes.append(receiver)
+
+        self.metadata_edges.append((sender, receiver, queue, name))
 
     def start(self):
         # TODO start from leave to root
