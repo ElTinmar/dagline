@@ -6,6 +6,7 @@ from ipc_tools import ObjectRingBuffer2, QueueMP
 from dagline import WorkerNode, ProcessingDAG
 from typing import Tuple
 from PyQt5.QtWidgets import QApplication, QLabel
+from multiprocessing_logger import Logger
 
 HEIGHT = 2048
 WIDTH = 2048
@@ -19,7 +20,7 @@ class Gui(WorkerNode):
         self.label.show()
 
     def process_data(self, data: None) -> NDArray:
-        self.app.process_events()
+        self.app.processEvents()
 
     def process_metadata(self, metadata: None) -> None:
         self.label.setText(metadata)
@@ -33,7 +34,7 @@ class Sender(WorkerNode):
 
     def process_data(self, data: None) -> NDArray:
         self.index += 1
-        timestamp = time.time.perf_counter() - self.start_time
+        timestamp = time.perf_counter() - self.start_time
         return (self.index, timestamp, np.random.randint(0,255,(HEIGHT,WIDTH), dtype=np.uint8))
     
     def process_metadata(self, metadata: None) -> str:
@@ -53,6 +54,9 @@ class Receiver(WorkerNode):
         cv2.imshow('receiver', data)
         cv2.waitKey(1)
 
+    def process_metadata(self, metadata: None) -> None:
+        pass
+    
 dt_uint8_gray = np.dtype([
     ('index', int, (1,)),
     ('timestamp', float, (1,)), 
@@ -73,10 +77,13 @@ def deserialize_image(arr: NDArray) -> Tuple[int, float, NDArray]:
 
 if __name__ == '__main__':
 
+    worker_logger = Logger('workers.log', Logger.INFO)
+    queue_logger = Logger('queues.log', Logger.INFO)
+
     # create workers
-    g = Gui()
-    s = Sender()
-    r = Receiver()
+    g = Gui(name='gui', logger=worker_logger, logger_queues=queue_logger)
+    s = Sender(name='sender', logger=worker_logger, logger_queues=queue_logger)
+    r = Receiver(name='receiver', logger=worker_logger, logger_queues=queue_logger)
 
     # create IPC
     q0 = ObjectRingBuffer2(
