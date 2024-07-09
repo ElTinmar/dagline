@@ -37,23 +37,23 @@ class Timing:
     
     @property
     def process_data_time_ms(self):
-        return (self.work_relative_ns - self.receive_data_relative_ns) * 1e-6
+        return (self.process_data_relative_ns - self.receive_data_relative_ns) * 1e-6
     
     @property
     def send_data_time_ms(self):
-        return (self.send_data_relative_ns - self.work_relative_ns) * 1e-6
+        return (self.send_data_relative_ns - self.process_data_relative_ns) * 1e-6
 
     @property
     def receive_metadata_time_ms(self):
-        return (self.send_data_relative_ns - self.work_relative_ns) * 1e-6
+        return (self.receive_metadata_relative_ns - self.send_data_relative_ns) * 1e-6
     
     @property
     def process_metadata_time_ms(self):
-        return (self.send_data_relative_ns - self.work_relative_ns) * 1e-6
+        return (self.process_metadata_relative_ns - self.receive_metadata_relative_ns) * 1e-6
     
     @property
     def send_metadata_time_ms(self):
-        return (self.send_data_relative_ns - self.work_relative_ns) * 1e-6
+        return (self.send_metadata_relative_ns - self.process_metadata_relative_ns) * 1e-6
     
     @property
     def total_time_ms(self):
