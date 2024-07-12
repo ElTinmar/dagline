@@ -40,6 +40,7 @@ class ProcessingDAG():
         for node in self.nodes:
             node.set_barrier(barrier)
             node.start()
+            print(f'starting node {node.name}')
 
     def stop(self):
         # TODO stop from root to leaves
