@@ -39,15 +39,17 @@ class ProcessingDAG():
         barrier = Barrier(len(self.nodes))
         for node in self.nodes:
             node.set_barrier(barrier)
-            node.start()
             print(f'starting node {node.name}')
+            node.start()
 
     def stop(self):
         # TODO stop from root to leaves
         for node in self.nodes:
+            print(f'stopping node {node.name}')
             node.stop()
 
     def kill(self):
         # TODO stop from root to leaves
         for node in self.nodes:
+            print(f'stopping node {node.name}')
             node.kill()

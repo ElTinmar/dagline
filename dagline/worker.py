@@ -242,7 +242,6 @@ class WorkerNode(ABC):
             self.barrier.wait()
         print(f'{self.name} initialized. starting work...')
 
-
     def cleanup(self) -> None:
         '''cleans resources at the end'''
         if self.profile:
