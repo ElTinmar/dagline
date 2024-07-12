@@ -36,6 +36,10 @@ class ProcessingDAG():
     def start(self):
         # TODO start from leave to root
 
+        print(self.nodes)
+        print(self.data_edges)
+        print(self.metadata_edges)
+
         barrier = Barrier(len(self.nodes))
         for node in self.nodes:
             node.set_barrier(barrier)
