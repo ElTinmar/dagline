@@ -173,6 +173,8 @@ class WorkerNode(ABC):
     def main_loop(self):
 
         self.initialize()
+        print(f'{self.name} initialized')
+        
         self.synchronize_workers() 
 
         timing = Timing()
