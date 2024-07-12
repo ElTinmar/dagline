@@ -141,7 +141,6 @@ class WorkerNode(ABC):
         self.send_metadata_strategy = send_metadata_strategy
 
         self.profile = profile
-        self.profiler = cProfile.Profile()
 
     def set_barrier(self, barrier: Barrier) -> None:
         self.barrier = barrier
@@ -174,7 +173,7 @@ class WorkerNode(ABC):
 
         self.initialize()
         print(f'{self.name} initialized')
-        
+
         self.synchronize_workers() 
 
         timing = Timing()
@@ -237,6 +236,7 @@ class WorkerNode(ABC):
         self.logger_queues.configure_emitter()
 
         if self.profile:
+            self.profiler = cProfile.Profile()
             self.profiler.enable()
 
     def synchronize_workers(self) -> None:
