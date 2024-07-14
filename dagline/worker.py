@@ -425,6 +425,7 @@ class WorkerNode(ABC):
         
     def start(self):
         '''start the loop in a separate process'''
+        self.stop_event.clear()
         self.process = Process(target = self.main_loop)
         self.process.start()
         
