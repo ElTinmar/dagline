@@ -48,12 +48,24 @@ class ProcessingDAG():
 
     def stop(self):
         # TODO stop from root to leaves
+        for sender, receiver, queue, name in self.data_edges:
+            queue.clear()
+
+        for sender, receiver, queue, name in self.metadata_edges:
+            queue.clear()
+            
         for node in self.nodes:
             print(f'stopping node {node.name}')
             node.stop()
 
     def kill(self):
         # TODO stop from root to leaves
+        for sender, receiver, queue, name in self.data_edges:
+            queue.clear()
+
+        for sender, receiver, queue, name in self.metadata_edges:
+            queue.clear()
+            
         for node in self.nodes:
             print(f'stopping node {node.name}')
             node.kill()
