@@ -42,19 +42,7 @@ class ProcessingDAG():
             node.start()
 
     def stop(self):
-        # TODO stop from root to leaves
-
-        for node in self.nodes:
-            node.stop_event.set()
-            
-        for _,_,q,_ in self.data_edges:
-            q.cancel_join_thread()
-            q.clear()
-        
-        for _,_,q,_ in self.metadata_edges:
-            q.cancel_join_thread()
-            q.clear()
-
+        # TODO stop from root to leave
         for node in self.nodes:
             print(f'stopping node {node.name}')
             node.stop()

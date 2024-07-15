@@ -244,25 +244,7 @@ class WorkerNode(ABC):
             self.barrier.wait()
         print(f'{self.name} initialized. starting work...')
 
-    def cleanup(self) -> None:
-        '''cleans resources at the end'''
-
-        for q in self.send_data_queues:
-            q.clear()
-            q.cancel_join_thread()
-
-        for q in self.send_metadata_queues:
-            q.clear()
-            q.cancel_join_thread()
-        
-        for q in self.receive_data_queues:
-            q.clear()
-            q.cancel_join_thread()
-
-        for q in self.receive_metadata_queues:
-            q.clear()
-            q.cancel_join_thread()
-          
+    def cleanup(self) -> None:          
         if self.profile:
             self.profiler.disable()
             ps = pstats.Stats(self.profiler)
