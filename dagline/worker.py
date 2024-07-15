@@ -424,10 +424,25 @@ class WorkerNode(ABC):
     @abstractmethod
     def process_metadata(self, metadata: Any) -> Any:
         '''handles and generate metadata'''
+
+    def reset(self):
+        self.stop_event.clear()
+        self.barrier = None
+        self.receive_data_queues = []
+        self.receive_data_queue_names = []
+        self.receive_data_queues_iterator = None
+        self.send_data_queues = []
+        self.send_data_queue_names = []
+        self.send_data_queues_iterator = None
+        self.receive_metadata_queues = []
+        self.receive_metadata_queue_names = []
+        self.receive_metadata_queues_iterator = None
+        self.send_metadata_queues = []
+        self.send_metadata_queue_names = []
+        self.send_metadata_queues_iterator = None
         
     def start(self):
         '''start the loop in a separate process'''
-        self.stop_event.clear()
         self.process = Process(target = self.main_loop)
         self.process.start()
         
