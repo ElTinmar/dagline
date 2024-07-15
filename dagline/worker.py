@@ -247,23 +247,6 @@ class WorkerNode(ABC):
     def cleanup(self) -> None:
         '''cleans resources at the end'''
 
-        # empty queues
-        for queue in self.receive_data_queues:
-            queue.clear()
-            queue.cancel_join_thread()
-
-        for queue in self.send_data_queues:
-            queue.clear()
-            queue.cancel_join_thread()
-
-        for queue in self.receive_metadata_queues:
-            queue.clear()
-            queue.cancel_join_thread()
-
-        for queue in self.send_metadata_queues:
-            queue.clear()
-            queue.cancel_join_thread()
-            
         if self.profile:
             self.profiler.disable()
             ps = pstats.Stats(self.profiler)
@@ -452,8 +435,10 @@ class WorkerNode(ABC):
         '''stop the loop and join process'''
         self.stop_event.set()
         self.process.join() # this may hang if queues are not empty
+        print(f'{self.name} succesfully exited...')
     
     def kill(self):
         '''stop the loop and join process'''
         self.stop_event.set()
         self.process.terminate() # stop even if queues are not empty
+        print(f'{self.name} succesfully exited...')
