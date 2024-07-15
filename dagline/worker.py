@@ -248,9 +248,11 @@ class WorkerNode(ABC):
         '''cleans resources at the end'''
 
         for q in self.send_data_queues:
+            q.clear()
             q.cancel_join_thread()
 
         for q in self.send_metadata_queues:
+            q.clear()
             q.cancel_join_thread()
           
         if self.profile:
