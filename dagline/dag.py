@@ -44,12 +44,15 @@ class ProcessingDAG():
     def stop(self):
         # TODO stop from root to leaves
 
+        for node in self.nodes:
+            node.stop_event.set()
+
         for sender,receiver,queue,name in self.data_edges:
             queue.clear()
 
         for sender,receiver,queue,name in self.metadata_edges:
             queue.clear()
-               
+    
         for node in self.nodes:
             print(f'stopping node {node.name}')
             node.stop()
