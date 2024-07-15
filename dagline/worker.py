@@ -247,6 +247,12 @@ class WorkerNode(ABC):
     def cleanup(self) -> None:
         '''cleans resources at the end'''
 
+        for q in self.send_data_queues:
+            q.cancel_join_thread()
+
+        for q in self.send_metadata_queues:
+            q.cancel_join_thread()
+          
         if self.profile:
             self.profiler.disable()
             ps = pstats.Stats(self.profiler)
