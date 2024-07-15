@@ -35,13 +35,6 @@ class ProcessingDAG():
 
     def start(self):
         # TODO start from leave to root
-
-        for sender, receiver, queue, name in self.data_edges:
-            queue.clear()
-
-        for sender, receiver, queue, name in self.metadata_edges:
-            queue.clear()
-
         barrier = Barrier(len(self.nodes))
         for node in self.nodes:
             node.set_barrier(barrier)
@@ -56,7 +49,6 @@ class ProcessingDAG():
 
     def kill(self):
         # TODO stop from root to leave
-
         for node in self.nodes:
             print(f'stopping node {node.name}')
             node.kill()

@@ -246,10 +246,25 @@ class WorkerNode(ABC):
 
     def cleanup(self) -> None:
         '''cleans resources at the end'''
+        
+        # empty queues
+        for queue in self.receive_data_queues:
+            queue.clear()
+
+        for queue in self.send_data_queues:
+            queue.clear()
+
+        for queue in self.receive_metadata_queues:
+            queue.clear()
+
+        for queue in self.send_metadata_queues:
+            queue.clear()
+
         if self.profile:
             self.profiler.disable()
             ps = pstats.Stats(self.profiler)
             ps.dump_stats(self.name + '.prof')
+
         print(f'{self.name} closing...')
 
     def receive(self) -> Optional[Any]:
