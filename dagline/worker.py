@@ -90,7 +90,7 @@ class WorkerNode(ABC):
             send_data_block: bool = False,
             send_data_timeout: Optional[float] = None,
             send_data_strategy: send_strategy = send_strategy.DISPATCH, 
-            receive_data_block: bool = False, # TODO maybe wether to block and timeout duration should be defined on a per queue basis
+            receive_data_block: bool = True, # TODO maybe wether to block and timeout duration should be defined on a per queue basis
             receive_data_timeout: Optional[float] = 10.0,
             receive_data_strategy: receive_strategy = receive_strategy.POLL,
             send_metadata_block: bool = False,
