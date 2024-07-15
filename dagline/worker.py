@@ -254,6 +254,14 @@ class WorkerNode(ABC):
         for q in self.send_metadata_queues:
             q.clear()
             q.cancel_join_thread()
+        
+        for q in self.receive_data_queues:
+            q.clear()
+            q.cancel_join_thread()
+
+        for q in self.receive_metadata_queues:
+            q.clear()
+            q.cancel_join_thread()
           
         if self.profile:
             self.profiler.disable()
