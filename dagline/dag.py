@@ -50,5 +50,5 @@ class ProcessingDAG():
     def kill(self):
         # TODO stop from root to leave
         for node in self.nodes:
-            print(f'stopping node {node.name}')
+            print(f'killing node {node.name}')
             node.kill()
