@@ -244,7 +244,17 @@ class WorkerNode(ABC):
             self.barrier.wait()
         print(f'{self.name} initialized. starting work...')
 
-    def cleanup(self) -> None:          
+    def cleanup(self) -> None:   
+
+        for q in self.send_data_queues:
+            q.cancel_join_thread()
+
+        for q in self.send_metadata_queues:
+            q.cancel_join_thread()
+
+        self.logger.queue.cancel_join_thread()
+        self.logger_queues.queue.cancel_join_thread()
+
         if self.profile:
             self.profiler.disable()
             ps = pstats.Stats(self.profiler)
