@@ -3,7 +3,7 @@ from distutils.core import setup
 setup(
     name='dagline',
     author='Martin Privat',
-    version='0.3.20',
+    version='0.3.21',
     packages=['dagline','dagline.tests'],
     license='MIT',
     description='DAG multiprocessing pipeline',
