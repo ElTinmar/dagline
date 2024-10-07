@@ -9,6 +9,10 @@ class ProcessingDAG():
         self.data_edges = []
         self.metadata_edges = []
 
+    def add_node(self, node: WorkerNode):
+        '''add isolated node'''
+        self.nodes.append(node)
+
     def connect_data(self, sender: WorkerNode, receiver: WorkerNode, queue: QueueLike, name: str):
         sender.register_send_data_queue(queue, name)
         receiver.register_receive_data_queue(queue, name)
