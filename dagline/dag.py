@@ -46,7 +46,6 @@ class ProcessingDAG():
             node.start()
 
     def stop(self):
-        # TODO stop from root to leave
         for sender, receiver, queue, name in self.data_edges:
             if isinstance(queue, MonitoredQueue):
                 base_queue = queue.queue
@@ -54,7 +53,8 @@ class ProcessingDAG():
                     print(f"Name: {name}, freq: {queue.get_average_freq()}, lost: {base_queue.num_lost_item.value}")
                 else:
                     print(f"Name: {name}, freq: {queue.get_average_freq()}")
-                          
+
+        # TODO stop from root to leave
         for node in self.nodes:
             print(f'stopping node {node.name}')
             node.stop()
