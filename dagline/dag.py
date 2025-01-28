@@ -44,8 +44,8 @@ class ProcessingDAG():
             node.set_barrier(barrier)
             print(f'starting node {node.name}')
             node.start()
-            
-        self.barrier.wait()
+
+        barrier.wait()
 
     def stop(self):
         for sender, receiver, queue, name in self.data_edges:
