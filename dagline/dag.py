@@ -41,9 +41,9 @@ class ProcessingDAG():
         # TODO start from leave to root
         barrier = Barrier(len(self.nodes))
         for node in self.nodes:
-            node.set_barrier(barrier)
             print(f'starting node {node.name}')
             node.start()
+            node.set_barrier(barrier)
 
     def stop(self):
         for sender, receiver, queue, name in self.data_edges:
