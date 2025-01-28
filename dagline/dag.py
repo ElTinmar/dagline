@@ -38,8 +38,8 @@ class ProcessingDAG():
         self.metadata_edges.append((sender, receiver, queue, name))
 
     def start(self):
-        # TODO start from leave to root
         barrier = Barrier(len(self.nodes)+1)
+
         for node in self.nodes:
             node.set_barrier(barrier)
             print(f'starting node {node.name}')
@@ -56,7 +56,6 @@ class ProcessingDAG():
                 else:
                     print(f"Name: {name}, freq: {queue.get_average_freq()}")
 
-        # TODO stop from root to leave
         for node in self.nodes:
             print(f'stopping node {node.name}')
             node.stop()
