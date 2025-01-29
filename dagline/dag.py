@@ -48,10 +48,16 @@ class ProcessingDAG():
         barrier.wait()
 
     def stop(self):
+        # ask everyone to stop
         for node in self.nodes:
             print(f'stopping node {node.name}')
             node.stop()
+
+        # make sure everyone is done and cleaned up
+        for node in self.nodes:
+            node.join()
         
+        # display stats
         for sender, receiver, queue, name in self.data_edges:
             if isinstance(queue, MonitoredQueue):
                 base_queue = queue.queue

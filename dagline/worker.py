@@ -457,9 +457,11 @@ class WorkerNode(ABC):
     def stop(self):
         '''stop the loop and join process'''
         self.stop_event.set()
+    
+    def join(self):
         self.process.join() # this may hang if queues are not empty
         print(f'{self.name} succesfully exited...')
-    
+
     def kill(self):
         '''stop the loop and join process'''
         self.stop_event.set()
