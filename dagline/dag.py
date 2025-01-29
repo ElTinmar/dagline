@@ -46,6 +46,7 @@ class ProcessingDAG():
             node.start()
 
         barrier.wait()
+        print('dag started')
 
     def stop(self):
         # ask everyone to stop
@@ -57,6 +58,8 @@ class ProcessingDAG():
         for node in self.nodes:
             node.join()
         
+        print('dag stopped')
+
         # display stats
         for sender, receiver, queue, name in self.data_edges:
             if isinstance(queue, MonitoredQueue):
