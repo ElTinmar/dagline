@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from multiprocessing import Event, Process, Barrier
-from typing  import Any, Optional, Dict, Iterator
+from typing  import Any, Optional, Dict, Iterator, Iterable
 import time
 from itertools import cycle
 from queue import Empty, Full
@@ -10,6 +10,7 @@ import cProfile
 import pstats
 from multiprocessing_logger import Logger
 from ipc_tools import QueueLike
+import os
 
 @dataclass
 class Timing:
@@ -99,7 +100,10 @@ class WorkerNode(ABC):
             receive_metadata_block: bool = False,
             receive_metadata_timeout: Optional[float] = None,
             receive_metadata_strategy: receive_strategy = receive_strategy.COLLECT,
-            profile: bool = False
+            profile: bool = False,
+            cpu_affinity: Optional[Iterable] = None,
+            scheduler_policy: int = os.SCHED_OTHER,
+            process_priority: int = 0
         ) -> None:
         
         super().__init__()
@@ -141,6 +145,10 @@ class WorkerNode(ABC):
         self.send_metadata_strategy = send_metadata_strategy
 
         self.profile = profile
+
+        self.cpu_affinity = cpu_affinity
+        self.scheduler_policy = scheduler_policy
+        self.process_priority = process_priority
 
     def set_barrier(self, barrier: Barrier) -> None:
         self.barrier = barrier
@@ -230,6 +238,24 @@ class WorkerNode(ABC):
 
     def initialize(self) -> None:
         '''initialize resources at the beginning of the loop in a new process'''
+
+        pid = os.getpid()
+
+        # set process affinity
+        if self.cpu_affinity is not None:
+            os.sched_setaffinity(pid, self.cpu_affinity)
+
+        # set scheduler policy and priority 
+        if self.scheduler_policy != os.SCHED_OTHER:
+            try:
+                os.sched_setscheduler(
+                    pid, 
+                    self.scheduler_policy, 
+                    os.sched_param(self.process_priority)
+                )
+                print(f"{self.name}: priority set to {self.process_priority}.")
+            except PermissionError:
+                print("Permission denied. Run as root or grant CAP_SYS_NICE to the Python executable.")
 
         # initialize loggers
         self.logger.configure_emitter()
