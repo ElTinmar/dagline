@@ -102,7 +102,7 @@ class WorkerNode(ABC):
             receive_metadata_strategy: receive_strategy = receive_strategy.COLLECT,
             profile: bool = False,
             cpu_affinity: Optional[Iterable] = None,
-            scheduler_policy: int = os.SCHED_OTHER,
+            scheduler_policy: int = 0, # os.SCHED_OTHER on linux
             process_priority: int = 0
         ) -> None:
         
@@ -239,23 +239,25 @@ class WorkerNode(ABC):
     def initialize(self) -> None:
         '''initialize resources at the beginning of the loop in a new process'''
 
-        pid = os.getpid()
+        if os.name != 'nt':
+            
+            pid = os.getpid()
 
-        # set process affinity
-        if self.cpu_affinity is not None:
-            os.sched_setaffinity(pid, self.cpu_affinity)
+            # set process affinity
+            if self.cpu_affinity is not None:
+                os.sched_setaffinity(pid, self.cpu_affinity)
 
-        # set scheduler policy and priority 
-        if self.scheduler_policy != os.SCHED_OTHER:
-            try:
-                os.sched_setscheduler(
-                    pid, 
-                    self.scheduler_policy, 
-                    os.sched_param(self.process_priority)
-                )
-                print(f"{self.name}: priority set to {self.process_priority}.")
-            except PermissionError:
-                print("Permission denied. Run as root or grant CAP_SYS_NICE to the Python executable.")
+            # set scheduler policy and priority 
+            if self.scheduler_policy != os.SCHED_OTHER:
+                try:
+                    os.sched_setscheduler(
+                        pid, 
+                        self.scheduler_policy, 
+                        os.sched_param(self.process_priority)
+                    )
+                    print(f"{self.name}: priority set to {self.process_priority}.")
+                except PermissionError:
+                    print("Permission denied. Run as root or grant CAP_SYS_NICE to the Python executable.")
 
         # initialize loggers
         self.logger.configure_emitter()
