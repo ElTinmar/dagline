@@ -8,6 +8,7 @@ class ProcessingDAG():
         self.nodes = []
         self.data_edges = []
         self.metadata_edges = []
+        self.running = False
 
     def add_node(self, node: WorkerNode):
         '''add isolated node'''
@@ -38,6 +39,7 @@ class ProcessingDAG():
         self.metadata_edges.append((sender, receiver, queue, name))
 
     def start(self):
+
         barrier = Barrier(len(self.nodes)+1)
 
         for node in self.nodes:
@@ -46,6 +48,7 @@ class ProcessingDAG():
             node.start()
 
         barrier.wait()
+        self.running = True
         print('dag started')
 
     def stop(self):
@@ -57,7 +60,8 @@ class ProcessingDAG():
         # make sure everyone is done and cleaned up
         for node in self.nodes:
             node.join()
-        
+
+        self.running = False
         print('dag stopped')
 
         # display stats
@@ -75,3 +79,5 @@ class ProcessingDAG():
         for node in self.nodes:
             print(f'killing node {node.name}')
             node.kill()
+
+        self.running = False
