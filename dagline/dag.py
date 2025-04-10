@@ -40,6 +40,8 @@ class ProcessingDAG():
 
     def start(self):
 
+        self.running = True
+
         barrier = Barrier(len(self.nodes)+1)
 
         for node in self.nodes:
@@ -48,7 +50,7 @@ class ProcessingDAG():
             node.start()
 
         barrier.wait()
-        self.running = True
+        
         print('dag started')
 
     def stop(self):
