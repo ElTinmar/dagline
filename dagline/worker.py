@@ -495,3 +495,12 @@ class WorkerNode(ABC):
         self.stop_event.set()
         self.process.terminate() # stop even if queues are not empty
         print(f'{self.name} succesfully exited...')
+
+
+class EmptyNode(WorkerNode):
+
+    def process_data(self, data):
+        pass
+
+    def process_metadata(self, metadata):
+        pass
