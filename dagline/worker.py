@@ -500,7 +500,7 @@ class WorkerNode(ABC):
 class EmptyNode(WorkerNode):
 
     def process_data(self, data):
-        pass
+        time.sleep(1) # don't use CPU
 
     def process_metadata(self, metadata):
-        pass
+        time.sleep(1) # don't use CPU
