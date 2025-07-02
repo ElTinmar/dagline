@@ -98,7 +98,7 @@ class WorkerNode(ABC):
             send_metadata_timeout: Optional[float] = None,
             send_metadata_strategy: send_strategy = send_strategy.BROADCAST, 
             receive_metadata_block: bool = False,
-            receive_metadata_timeout: Optional[float] = None,
+            receive_metadata_timeout: Optional[float] = 10.0,
             receive_metadata_strategy: receive_strategy = receive_strategy.COLLECT,
             profile: bool = False,
             cpu_affinity: Optional[Iterable] = None,
