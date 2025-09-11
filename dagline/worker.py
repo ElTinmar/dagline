@@ -88,6 +88,7 @@ class WorkerNode(ABC):
             name: str, 
             logger: Logger,
             logger_queues: Logger,
+            log_level = Logger.ERROR,
             send_data_block: bool = False,
             send_data_timeout: Optional[float] = None,
             send_data_strategy: send_strategy = send_strategy.DISPATCH, 
@@ -115,6 +116,7 @@ class WorkerNode(ABC):
         self.logger = logger
         self.logger_queues = logger_queues
         self.local_logger = self.logger.get_logger(self.name)
+        self.log_level = log_level
 
         self.receive_data_queues = []
         self.receive_data_queue_names = []
@@ -260,8 +262,8 @@ class WorkerNode(ABC):
                     print("Permission denied. Run as root or grant CAP_SYS_NICE to the Python executable.")
 
         # initialize loggers
-        self.logger.configure_emitter()
-        self.logger_queues.configure_emitter()
+        self.logger.configure_emitter(self.log_level)
+        self.logger_queues.configure_emitter(self.log_level)
 
         if self.profile:
             self.profiler = cProfile.Profile()
