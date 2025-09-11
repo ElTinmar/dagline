@@ -416,14 +416,15 @@ class WorkerNode(ABC):
         ) -> None:
         '''send data to all queues with proper names'''
 
-        if data_dict is not None:
+        if data_dict is None:
+            return
 
-            for name, queue in zip(send_queue_names, send_queues):      
-                if name in data_dict:
-                    try:
-                        queue.put(data_dict[name], block=send_block, timeout=send_timeout)
-                    except Full:
-                        pass
+        for name, queue in zip(send_queue_names, send_queues):      
+            if name in data_dict:
+                try:
+                    queue.put(data_dict[name], block=send_block, timeout=send_timeout)
+                except Full:
+                    pass
 
     # static method
     def dispatch(
@@ -433,6 +434,9 @@ class WorkerNode(ABC):
             send_timeout: Optional[bool]
         ) -> None:
         '''Use if all queues are equivalent. Send data alternatively to each queue'''
+
+        if data is None:
+            return
 
         if send_queues_iterator is not None:
 
