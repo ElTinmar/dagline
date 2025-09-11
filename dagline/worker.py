@@ -370,40 +370,44 @@ class WorkerNode(ABC):
     def send(self, data: Optional[Any]) -> None:
         '''sends data'''
 
-        if data is not None:
-            if self.send_data_strategy == send_strategy.BROADCAST:
-                self.broadcast(
-                    data,
-                    self.send_data_queue_names,
-                    self.send_data_queues,
-                    self.send_data_block,
-                    self.send_data_timeout
-                    )
-            elif self.send_data_strategy == send_strategy.DISPATCH:
-                self.dispatch(
-                    data,
-                    self.send_data_queues_iterator,
-                    self.send_data_timeout
+        if data is None:
+            return
+            
+        if self.send_data_strategy == send_strategy.BROADCAST:
+            self.broadcast(
+                data,
+                self.send_data_queue_names,
+                self.send_data_queues,
+                self.send_data_block,
+                self.send_data_timeout
                 )
+        elif self.send_data_strategy == send_strategy.DISPATCH:
+            self.dispatch(
+                data,
+                self.send_data_queues_iterator,
+                self.send_data_timeout
+            )
 
     def send_metadata(self, metadata: Optional[Any]) -> None:
         '''sends data'''
 
-        if metadata is not None:
-            if self.send_metadata_strategy == send_strategy.BROADCAST:
-                self.broadcast(
-                    metadata,
-                    self.send_metadata_queue_names,
-                    self.send_metadata_queues,
-                    self.send_metadata_block,
-                    self.send_metadata_timeout
-                    )
-            elif self.send_metadata_strategy == send_strategy.DISPATCH:
-                self.dispatch(
-                    metadata,
-                    self.send_metadata_queues_iterator,
-                    self.send_metadata_timeout
+        if metadata is None:
+            return 
+
+        if self.send_metadata_strategy == send_strategy.BROADCAST:
+            self.broadcast(
+                metadata,
+                self.send_metadata_queue_names,
+                self.send_metadata_queues,
+                self.send_metadata_block,
+                self.send_metadata_timeout
                 )
+        elif self.send_metadata_strategy == send_strategy.DISPATCH:
+            self.dispatch(
+                metadata,
+                self.send_metadata_queues_iterator,
+                self.send_metadata_timeout
+            )
 
     # static method
     def broadcast(
