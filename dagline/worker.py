@@ -270,7 +270,7 @@ class WorkerNode(ABC):
             self.profiler = cProfile.Profile()
             self.profiler.enable()
 
-        gc.disable()
+        #gc.disable()
 
     def synchronize_workers(self) -> None:
         if self.barrier:
@@ -279,8 +279,8 @@ class WorkerNode(ABC):
 
     def cleanup(self) -> None:   
 
-        gc.enable()
-        gc.collect()
+        #gc.enable()
+        #gc.collect()
 
         for q in self.send_data_queues:
             q.cancel_join_thread()
