@@ -11,6 +11,7 @@ import pstats
 from multiprocessing_logger import Logger
 from ipc_tools import QueueLike
 import os
+import gc
 
 @dataclass
 class Timing:
@@ -269,12 +270,17 @@ class WorkerNode(ABC):
             self.profiler = cProfile.Profile()
             self.profiler.enable()
 
+        gc.disable()
+
     def synchronize_workers(self) -> None:
         if self.barrier:
             self.barrier.wait()
         print(f'{self.name} initialized. starting work...')
 
     def cleanup(self) -> None:   
+
+        gc.enable()
+        gc.collect()
 
         for q in self.send_data_queues:
             q.cancel_join_thread()
