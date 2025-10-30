@@ -105,7 +105,8 @@ class WorkerNode(ABC):
             profile: bool = False,
             cpu_affinity: Optional[Iterable] = None,
             scheduler_policy: int = 0, # os.SCHED_OTHER on linux
-            process_priority: int = 0
+            process_priority: int = 0,
+            disable_gc: bool = False
         ) -> None:
         
         super().__init__()
@@ -152,6 +153,7 @@ class WorkerNode(ABC):
         self.cpu_affinity = cpu_affinity
         self.scheduler_policy = scheduler_policy
         self.process_priority = process_priority
+        self.disable_gc = disable_gc
 
     def set_barrier(self, barrier: Barrier) -> None:
         self.barrier = barrier
@@ -270,7 +272,8 @@ class WorkerNode(ABC):
             self.profiler = cProfile.Profile()
             self.profiler.enable()
 
-        #gc.disable()
+        if self.disable_gc:
+            gc.disable()
 
     def synchronize_workers(self) -> None:
         if self.barrier:
@@ -279,8 +282,9 @@ class WorkerNode(ABC):
 
     def cleanup(self) -> None:   
 
-        #gc.enable()
-        #gc.collect()
+        if self.disable_gc:
+            gc.enable()
+            gc.collect()
 
         for q in self.send_data_queues:
             q.cancel_join_thread()
