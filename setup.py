@@ -3,7 +3,7 @@ from distutils.core import setup
 setup(
     name='dagline',
     author='Martin Privat',
-    version='0.5.15',
+    version='0.5.16',
     packages=['dagline','dagline.tests'],
     license='MIT',
     description='DAG multiprocessing pipeline',
@@ -11,7 +11,7 @@ setup(
     install_requires=[
         "pandas",
         "seaborn",
-        "multiprocessing_logger @ git+https://github.com/ElTinmar/multiprocessing_logger.git@v0.3.12",
-        "ipc_tools @ git+https://github.com/ElTinmar/ipc_tools.git@v0.4.7"
+        "multiprocessing_logger @ git+https://github.com/ElTinmar/multiprocessing_logger.git@v0.3.13",
+        "ipc_tools @ git+https://github.com/ElTinmar/ipc_tools.git@v0.4.8"
     ]
 )
